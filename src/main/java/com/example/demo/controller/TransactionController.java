@@ -15,7 +15,7 @@ import java.util.*;
 
 @RestController
 @RequestMapping(path = "api/v1/transaction")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "https://paymentology-front.herokuapp.com/")
 public class TransactionController{
 
     @Autowired

@@ -1,7 +1,6 @@
 package com.example.demo.controller;
 
 import com.example.demo.service.Transactions;
-import com.example.demo.service.Transactions;
 import com.univocity.parsers.common.record.Record;
 import com.univocity.parsers.csv.CsvParser;
 import com.univocity.parsers.csv.CsvParserSettings;
@@ -15,7 +14,7 @@ import java.util.*;
 
 @RestController
 @RequestMapping(path = "api/v1/transaction")
-@CrossOrigin(origins = "https://paymentology-front.herokuapp.com/")
+@CrossOrigin(origins = "http://localhost:3001/")
 public class TransactionController{
 
     @Autowired
@@ -34,13 +33,13 @@ public class TransactionController{
                 Map<String, String> orig;
                 int i = 0;
                 String[] csvName = new String[2];
+                //initialize csv parser settings
+                CsvParserSettings settings = new CsvParserSettings();
+                //get the headers from our input file
+                settings.setHeaderExtractionEnabled(true);
+                //initialize csv parser
+                CsvParser parser = new CsvParser(settings);
                 for (MultipartFile multipartFile : file) {
-                    //initialize csv parser settings
-                    CsvParserSettings settings = new CsvParserSettings();
-                    //get the headers from our input file
-                    settings.setHeaderExtractionEnabled(true);
-                    //initialize csv parser
-                    CsvParser parser = new CsvParser(settings);
                     InputStream inputStream = multipartFile.getInputStream();
                     csvName[i] = multipartFile.getOriginalFilename();
                     // parse csv on demand.
@@ -55,9 +54,9 @@ public class TransactionController{
                     i++;
                 }
                 //get report when file 1 is checked against file 2
-                result.put("file1", transactions.generateTransactionRecordReport(allRows.get(0), allRows.get(1), csvName[0], "TransactionID"));
-                // get report when file 2 is checked against file 1
-                result.put("file2", transactions.generateTransactionRecordReport(allRows.get(1), allRows.get(0), csvName[1], "TransactionID"));
+                result.put("result", transactions.generateTransactionRecordReport(allRows.get(0), allRows.get(1), csvName[0],"TransactionID"));
+                //get report when file 2 is checked against file 1
+                result.put("result1", transactions.generateTransactionRecordReport(allRows.get(1), allRows.get(0), csvName[1], "TransactionID"));
                 return ResponseEntity.ok().body(result);
             } catch (Exception e){
                 throw new Exception(e);

@@ -43,9 +43,8 @@ class TransactionsTest extends Transactions {
                                 List.of(Map.ofEntries(
                                         Map.entry("size", "1")))),
                         Map.entry("noMatch", List.of()),
-                        Map.entry("name", List.of(Map.ofEntries(Map.entry("name", "PaymentologyMarkoffFile20140113.csv")))),
-                        Map.entry("closeMatchedTo", List.of()))
+                        Map.entry("name", List.of(Map.ofEntries(Map.entry("name", "PaymentologyMarkoffFile20140113.csv")))))
         );
-        assertEquals(expectedResult, generateTransactionRecordReport(test1, test2, "PaymentologyMarkoffFile20140113.csv", "TransactionID"));
+        assertEquals(expectedResult, generateTransactionRecordReport(test1, test2, "PaymentologyMarkoffFile20140113.csv", test1.size()));
     }
 }

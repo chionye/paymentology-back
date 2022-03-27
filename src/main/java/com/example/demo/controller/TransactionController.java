@@ -9,12 +9,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.BufferedInputStream;
 import java.io.InputStream;
 import java.util.*;
 
 @RestController
 @RequestMapping(path = "api/v1/transaction")
-@CrossOrigin(origins = "https://paymentology-front.herokuapp.com/")
+@CrossOrigin(origins = "http://localhost:3000/")
 public class TransactionController{
 
     @Autowired
@@ -28,7 +29,7 @@ public class TransactionController{
         if(transactions.getContentTypes().contains(fileContentType[0]) || transactions.getContentTypes().contains(fileContentType[1])) {
             try {
                 List<List<Map<String, String>>> allRows = new ArrayList<>();
-                //data type 'Record' provided by Univocity dependency
+                //data type 'Record' provided by the Univocity dependency
                 Record record;
                 Map<String, String> orig;
                 int i = 0;
@@ -40,7 +41,7 @@ public class TransactionController{
                 //initialize csv parser
                 CsvParser parser = new CsvParser(settings);
                 for (MultipartFile multipartFile : file) {
-                    InputStream inputStream = multipartFile.getInputStream();
+                    BufferedInputStream inputStream = new BufferedInputStream(multipartFile.getInputStream());
                     csvName[i] = multipartFile.getOriginalFilename();
                     // parse csv on demand.
                     parser.beginParsing(inputStream);
@@ -54,16 +55,15 @@ public class TransactionController{
                     i++;
                 }
                 //get report when file 1 is checked against file 2
-                result.put("result", transactions.generateTransactionRecordReport(allRows.get(0), allRows.get(1), csvName[0],"TransactionID"));
+                result.put("result", transactions.generateTransactionRecordReport(allRows.get(0), allRows.get(1), csvName[0],allRows.get(0).size()));
                 //get report when file 2 is checked against file 1
-                result.put("result1", transactions.generateTransactionRecordReport(allRows.get(1), allRows.get(0), csvName[1], "TransactionID"));
-                return ResponseEntity.ok().body(result);
+                result.put("result1", transactions.generateTransactionRecordReport(allRows.get(1), allRows.get(0), csvName[1],allRows.get(1).size()));
+               return ResponseEntity.ok().body(result);
             } catch (Exception e){
                 throw new Exception(e);
             }
-        }else {
+        } else {
             return ResponseEntity.noContent().build();
         }
     }
 }
-
